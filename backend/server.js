@@ -4,10 +4,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const app = express();
+const app = express(); // Move this line to the top!
+
 app.use(cors());
 app.use(bodyParser.json());
-//hello hi 
+
+// Import routes (AFTER app is initialized)
+const analysisRoutes = require("./routes/analysisRoutes");
+app.use("/api/analysis", analysisRoutes);
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)

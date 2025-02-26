@@ -1,0 +1,23 @@
+const express = require("express");
+const router = express.Router();
+const Analysis = require("../models/Analysis");
+
+// Route to save PESTEL analysis
+router.post("/", async (req, res) => {
+  try {
+    const { company, analysis } = req.body;
+    
+    if (!company || !analysis) {
+      return res.status(400).json({ message: "Company and analysis are required." });
+    }
+
+    const newAnalysis = new Analysis({ company, analysis });
+    await newAnalysis.save();
+
+    res.status(201).json({ message: "Analysis saved successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+module.exports = router;
