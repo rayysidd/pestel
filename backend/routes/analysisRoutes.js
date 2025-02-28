@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Analysis = require("../models/Analysis");
+const { getPESTELAnalysis } = require("../controllers/geminiController");
 
 // Route to save PESTEL analysis
 router.post("/", async (req, res) => {
@@ -28,4 +29,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: err.message }); // Send error if something goes wrong
   }
 });
+
+router.post("/generate", getPESTELAnalysis);
 module.exports = router;
