@@ -20,4 +20,12 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const analyses = await Analysis.find(); // Fetch all documents from MongoDB
+    res.json(analyses); // Send them as JSON response
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // Send error if something goes wrong
+  }
+});
 module.exports = router;
