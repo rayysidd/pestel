@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import axios from "axios";
-const API_URL = "http://localhost:5001/api/analysis";
+const API_URL = "http://localhost:5002/api/analysis";
 
 function App() {
   // States
@@ -16,9 +16,10 @@ function App() {
   // Load saved analyses from localStorage on component mount
   useEffect(() => {
     axios.get(API_URL)
-      .then((response) => setSavedAnalyses(response.data))
-      .catch((error) => console.error("Error fetching saved analyses:", error));
-  }, []);
+        .then((response) => setSavedAnalyses(response.data))
+        .catch((error) => console.error("Error fetching saved analyses:", error));
+}, [savedAnalyses]); // Depend on savedAnalyses so updates reflect immediately
+
   
   const handleNavClick = (page) => {
     setActivePage(page)
@@ -38,13 +39,14 @@ function App() {
             sector: sector,
         });
 
-        setAnalysisResult(response.data); // Save received data
+        setAnalysisResult(response.data);
     } catch (error) {
         console.error("Error fetching analysis:", error);
     } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Ensure loading is stopped even if there's an error
     }
 };
+
 
 
   const handleSubmit = (e) => {
