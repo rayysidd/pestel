@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import axios from "axios";
+const API_URL = "http://localhost:5001/api/analysis";
 
 function App() {
   // States
@@ -13,12 +15,11 @@ function App() {
   
   // Load saved analyses from localStorage on component mount
   useEffect(() => {
-    const saved = localStorage.getItem('savedPestelAnalyses')
-    if (saved) {
-      setSavedAnalyses(JSON.parse(saved))
-    }
-  }, [])
-
+    axios.get(API_URL)
+      .then((response) => setSavedAnalyses(response.data))
+      .catch((error) => console.error("Error fetching saved analyses:", error));
+  }, []);
+  
   const handleNavClick = (page) => {
     setActivePage(page)
     
@@ -29,62 +30,64 @@ function App() {
 
   // Mock function to simulate API call
   const fetchPestelAnalysis = async () => {
-    setIsLoading(true)
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // Mock response
-    const mockResponse = {
-      company: companyName,
-      sector: sector,
-      date: new Date().toISOString(),
-      analysis: {
-        political: `Political factors affecting ${companyName} in the ${sector} sector include government regulations, trade policies, and political stability in key markets.`,
-        economic: `Economic factors include market growth rate, inflation, interest rates, and economic stability in regions where ${companyName} operates.`,
-        social: `Social trends affecting ${companyName} include changing consumer preferences, demographic shifts, and cultural factors influencing purchasing decisions.`,
-        technological: `${companyName} must consider technological advancements in the ${sector} sector, digital transformation trends, and innovation requirements.`,
-        environmental: `Environmental considerations include sustainability practices, carbon footprint reduction, and compliance with environmental regulations.`,
-        legal: `Legal factors affecting ${companyName} include industry-specific regulations, data protection laws, and intellectual property considerations.`
-      }
+    setIsLoading(true);
+
+    try {
+        const response = await axios.post('http://localhost:5001/api/generate-pestel', {
+            company: companyName,
+            sector: sector,
+        });
+
+        setAnalysisResult(response.data); // Save received data
+    } catch (error) {
+        console.error("Error fetching analysis:", error);
+    } finally {
+        setIsLoading(false);
     }
-    
-    setAnalysisResult(mockResponse)
-    setIsLoading(false)
-  }
+};
+
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (companyName.trim() && sector.trim()) {
-      fetchPestelAnalysis()
-    }
-  }
+    e.preventDefault();
 
-  const saveAnalysis = () => {
+    if (!companyName.trim() && !sector.trim()) {
+        alert("Please enter either a company name or sector.");
+        return;
+    }
+
+    fetchPestelAnalysis();
+  };
+
+
+  const saveAnalysis = async () => {
     if (analysisResult) {
-      const newSavedAnalyses = [
-        ...savedAnalyses,
-        {
-          id: Date.now(),
-          ...analysisResult,
-          savedAt: new Date().toISOString()
-        }
-      ]
-      
-      setSavedAnalyses(newSavedAnalyses)
-      localStorage.setItem('savedPestelAnalyses', JSON.stringify(newSavedAnalyses))
-      alert('Analysis saved successfully!')
+      try {
+        await axios.post(API_URL, {
+          company: analysisResult.company,
+          sector: analysisResult.sector,
+        });
+  
+        alert("Analysis saved successfully!");
+        const response = await axios.get(API_URL);
+        setSavedAnalyses(response.data); // Refresh saved list
+      } catch (error) {
+        console.error("Error saving analysis:", error);
+      }
     }
-  }
+  };
+  
 
-  const deleteAnalysis = (id) => {
-    const confirmed = confirm('Are you sure you want to delete this analysis?')
-    if (confirmed) {
-      const updatedAnalyses = savedAnalyses.filter(analysis => analysis.id !== id)
-      setSavedAnalyses(updatedAnalyses)
-      localStorage.setItem('savedPestelAnalyses', JSON.stringify(updatedAnalyses))
+  const deleteAnalysis = async (id) => {
+    if (confirm("Are you sure you want to delete this analysis?")) {
+      try {
+        await axios.delete(`${API_URL}/${id}`);
+        setSavedAnalyses(savedAnalyses.filter((analysis) => analysis._id !== id));
+      } catch (error) {
+        console.error("Error deleting analysis:", error);
+      }
     }
-  }
+  };
+  
 
   const viewAnalysis = (analysis) => {
     setAnalysisResult(analysis)

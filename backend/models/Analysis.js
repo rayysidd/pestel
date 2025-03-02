@@ -1,9 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const analysisSchema = new mongoose.Schema({
-  company: { type: String, required: true },
-  analysis: { type: String, required: true },
-  date: { type: Date, default: Date.now }
+const AnalysisSchema = new mongoose.Schema({
+  company: String,
+  sector: String,
+  date: String,
+  analysis: Object,
 });
 
-module.exports = mongoose.model("Analysis", analysisSchema);
+// ✅ Use `mongoose.models.Analysis` to prevent re-compiling
+const Analysis = mongoose.models.Analysis || mongoose.model('Analysis', AnalysisSchema);
+
+module.exports = Analysis;
