@@ -6,7 +6,11 @@ const bodyParser = require("body-parser");
 
 const app = express(); // Move this line to the top!
 
-app.use(cors());
+app.use(cors({ 
+  origin: "*", // Allow all origins (for now)
+  methods: ["GET", "POST"], // Allow only necessary methods
+  allowedHeaders: ["Content-Type"] // Restrict headers
+}));
 app.use(bodyParser.json());
 
 // Import routes (AFTER app is initialized)
