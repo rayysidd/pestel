@@ -37,7 +37,7 @@ app.post("/api/generate-pestel", async (req, res) => {
     const query = company ? `Company: ${company}, Sector: ${sector || 'N/A'}` : `Sector: ${sector}`;
     
     // Call Gemini API
-    const response = await geminiAPI.analyze(query);
+    const response = await genAI.analyze(query);
     
     res.json({ analysis: response });
 } catch (error) {
@@ -56,7 +56,7 @@ app.delete("/api/analysis/:id", async (req, res) => {
   res.json({ message: "Analysis deleted successfully" });
 });
 
-app.listen(5001, () => console.log("Server running on port 5001"));
+//app.listen(5001, () => console.log("Server running on port 5001"));
 app.use(cors({ 
   origin: "*", // Allow all origins (for now)
   methods: ["GET", "POST"], // Allow only necessary methods
