@@ -6,27 +6,22 @@ const { getPESTELAnalysis } = require("../controllers/geminiController");
 // Route to save PESTEL analysis
 router.post("/", async (req, res) => {
   try {
-    const { company, analysis } = req.body;
-    
-    if (!company || !analysis) {
-      return res.status(400).json({ message: "Company and analysis are required." });
-    }
-
-    const newAnalysis = new Analysis({ company, analysis });
+    const newAnalysis = new Analysis(req.body);
     await newAnalysis.save();
-
     res.status(201).json({ message: "Analysis saved successfully!" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error saving analysis:", error);
+    res.status(500).json({ error: "Failed to save analysis." });
   }
 });
 
 router.get("/", async (req, res) => {
   try {
-    const analyses = await Analysis.find(); // Fetch all documents from MongoDB
-    res.json(analyses); // Send them as JSON response
-  } catch (err) {
-    res.status(500).json({ message: err.message }); // Send error if something goes wrong
+    const analyses = await Analysis.find();
+    res.json(analyses);
+  } catch (error) {
+    console.error("Error fetching analyses:", error);
+    res.status(500).json({ error: "Failed to fetch analyses." });
   }
 });
 

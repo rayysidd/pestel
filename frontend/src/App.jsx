@@ -64,10 +64,15 @@ function App() {
   const saveAnalysis = async () => {
     if (analysisResult) {
       try {
-        await axios.post(API_URL, {
-          company: analysisResult.company,
-          sector: analysisResult.sector,
-        });
+        const analysisToSave = {
+          company: companyName, // Use input fields for accuracy
+          sector: sector,
+          analysis: analysisResult.analysis, // Ensure full analysis is saved
+          date: new Date().toISOString(), // Save current date
+          savedAt: new Date().toISOString()
+        };
+  
+        await axios.post(API_URL, analysisToSave);
   
         alert("Analysis saved successfully!");
         const response = await axios.get(API_URL);
@@ -77,6 +82,7 @@ function App() {
       }
     }
   };
+  
   
 
   const deleteAnalysis = async (id) => {
