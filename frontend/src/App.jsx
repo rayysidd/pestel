@@ -34,7 +34,7 @@ function App() {
     setIsLoading(true);
 
     try {
-        const response = await axios.post('http://localhost:5001/api/generate-pestel', {
+        const response = await axios.post('http://localhost:5002/api/generate-pestel', {
             company: companyName,
             sector: sector,
         });
