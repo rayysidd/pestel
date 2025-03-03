@@ -17,7 +17,7 @@ const getPESTELAnalysis = async (req, res) => {
     // Extracting the correct response format
     const responseText = result.candidates[0].content.parts[0].text;
 
-    res.json({ company, analysis: responseText });
+    res.json({ company, sector, date: new Date().toISOString(), analysis: responseText });
   } catch (error) {
     console.error("Error fetching PESTEL analysis:", error);
     res.status(500).json({ error: "Failed to fetch PESTEL analysis" });

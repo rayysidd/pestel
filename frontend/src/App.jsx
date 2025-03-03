@@ -1,92 +1,117 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
 import axios from "axios";
+// Import the debugger component
+// Create this component in a separate file named DataDebugger.jsx
+import DataDebugger from './DataDebugger.jsx'; 
+
 const API_URL = "http://localhost:5002/api/analysis";
 
 function App() {
   // States
-  const [activePage, setActivePage] = useState('Home')
-  const [companyName, setCompanyName] = useState('')
-  const [sector, setSector] = useState('')
-  const [analysisResult, setAnalysisResult] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [savedAnalyses, setSavedAnalyses] = useState([])
-  const [activeTab, setActiveTab] = useState('form')
+  const [activePage, setActivePage] = useState('Home');
+  const [companyName, setCompanyName] = useState('');
+  const [sector, setSector] = useState('');
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [savedAnalyses, setSavedAnalyses] = useState([]);
+  const [activeTab, setActiveTab] = useState('form');
+  const [showDebugger, setShowDebugger] = useState(true); // Set to true to show debugger
+
+  // Helper function to parse markdown analysis string into an object
+  const parseMarkdownToAnalysis = (markdown) => {
+    const analysisObj = {};
+    // Split the markdown string by double newlines to get each factor
+    const entries = markdown.split("\n\n");
+    entries.forEach(entry => {
+      // Remove the leading bullet and any extra whitespace
+      const cleanedEntry = entry.replace(/^\*\s*/, "").trim();
+      // Split at the first colon
+      const [keyPart, ...valueParts] = cleanedEntry.split(":");
+      if (keyPart && valueParts.length > 0) {
+        // Remove any markdown formatting from the key (like **)
+        const key = keyPart.replace(/\*\*/g, "").trim().toLowerCase();
+        const value = valueParts.join(":").trim();
+        analysisObj[key] = value;
+      }
+    });
+    return analysisObj;
+  };
   
-  // Load saved analyses from localStorage on component mount
+
+  // Load saved analyses on component mount
   useEffect(() => {
     axios.get(API_URL)
-        .then((response) => setSavedAnalyses(response.data))
-        .catch((error) => console.error("Error fetching saved analyses:", error));
-}, [savedAnalyses]); // Depend on savedAnalyses so updates reflect immediately
+      .then((response) => setSavedAnalyses(response.data))
+      .catch((error) => console.error("Error fetching saved analyses:", error));
+  }, []); // Only on mount
 
-  
   const handleNavClick = (page) => {
-    setActivePage(page)
-    
+    setActivePage(page);
     if (page === 'PESTEL analysis') {
-      setActiveTab('form')
+      setActiveTab('form');
     }
-  }
+  };
 
-  // Mock function to simulate API call
   const fetchPestelAnalysis = async () => {
     setIsLoading(true);
-
     try {
-        const response = await axios.post('http://localhost:5002/api/generate-pestel', {
-            company: companyName,
-            sector: sector,
-        });
-
-        setAnalysisResult(response.data);
+      const response = await axios.post('http://localhost:5002/api/generate-pestel', {
+        company: companyName,
+        sector: sector,
+      });
+      // If analysis is a markdown string, parse it into an object.
+      let data = response.data;
+      if (data && typeof data.analysis === 'string') {
+        data.analysis = parseMarkdownToAnalysis(data.analysis);
+      }
+      if (!data.date) {
+        data.date = new Date().toISOString();
+      }
+      if (!data.sector) {
+        data.sector = sector;
+      }
+      console.log("New analysis data:", data);
+      setAnalysisResult({ ...data });
     } catch (error) {
-        console.error("Error fetching analysis:", error);
+      console.error("Error fetching analysis:", error);
     } finally {
-        setIsLoading(false); // Ensure loading is stopped even if there's an error
+      setIsLoading(false);
     }
-};
-
-
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!companyName.trim() && !sector.trim()) {
-        alert("Please enter either a company name or sector.");
-        return;
+      alert("Please enter either a company name or sector.");
+      return;
     }
-
     fetchPestelAnalysis();
   };
-
 
   const saveAnalysis = async () => {
     if (analysisResult) {
       try {
         const analysisToSave = {
-          company: companyName, // Use input fields for accuracy
+          company: companyName,
           sector: sector,
-          analysis: analysisResult.analysis, // Ensure full analysis is saved
-          date: new Date().toISOString(), // Save current date
+          analysis: analysisResult.analysis,
+          date: new Date().toISOString(),
           savedAt: new Date().toISOString()
         };
-  
+        console.log("Saving analysis:", analysisToSave);
         await axios.post(API_URL, analysisToSave);
-  
         alert("Analysis saved successfully!");
         const response = await axios.get(API_URL);
-        setSavedAnalyses(response.data); // Refresh saved list
+        setSavedAnalyses(response.data);
       } catch (error) {
         console.error("Error saving analysis:", error);
       }
     }
   };
-  
-  
 
   const deleteAnalysis = async (id) => {
-    if (confirm("Are you sure you want to delete this analysis?")) {
+    if (window.confirm("Are you sure you want to delete this analysis?")) {
       try {
         await axios.delete(`${API_URL}/${id}`);
         setSavedAnalyses(savedAnalyses.filter((analysis) => analysis._id !== id));
@@ -95,23 +120,48 @@ function App() {
       }
     }
   };
-  
 
   const viewAnalysis = (analysis) => {
-    setAnalysisResult(analysis)
-    setActiveTab('form')
-  }
+    console.log("Viewing saved analysis:", analysis);
+    
+    // Set sector and company name from the saved analysis
+    setCompanyName(analysis.company || "");
+    setSector(analysis.sector || "");
+    
+    // Create a standardized analysis result object
+    const standardizedResult = {
+      company: analysis.company || "",
+      sector: analysis.sector || "",
+      date: analysis.date || analysis.savedAt || new Date().toISOString(),
+      analysis: analysis.analysis || {}
+    };
+    
+    console.log("Standardized analysis result:", standardizedResult);
+    setAnalysisResult(standardizedResult);
+    setActiveTab('form');
+  };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    if (!dateString) return "No date available";
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Invalid date format";
+      }
+      
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Error formatting date";
+    }
+  };
 
   const renderPestelContent = () => {
     return (
@@ -147,7 +197,6 @@ function App() {
                     required
                   />
                 </div>
-                
                 <div className="form-group">
                   <label htmlFor="sector">Industry/Sector</label>
                   <input
@@ -160,13 +209,11 @@ function App() {
                     required
                   />
                 </div>
-                
                 <button type="submit" className="btn btn-primary" disabled={isLoading}>
                   {isLoading ? 'Generating Analysis...' : 'Generate PESTEL Analysis'}
                 </button>
               </form>
             </div>
-            
             {isLoading ? (
               <div className="loader">
                 <div className="loader-dot"></div>
@@ -175,47 +222,55 @@ function App() {
               </div>
             ) : analysisResult ? (
               <div className="data-box">
-                <h2>{analysisResult.company} - PESTEL Analysis</h2>
-                <p><strong>Sector:</strong> {analysisResult.sector}</p>
-                <p><strong>Date:</strong> {formatDate(analysisResult.date)}</p>
+                <h2>{analysisResult.company || companyName} - PESTEL Analysis</h2>
+                <p><strong>Sector:</strong> {analysisResult.sector || sector}</p>
+                <p><strong>Date:</strong> {formatDate(analysisResult.date || analysisResult.savedAt)}</p>
                 
                 <h3>Political Factors</h3>
-                <p>{analysisResult.analysis.political}</p>
-                
+                <p>{analysisResult.analysis?.political || "No data available"}</p>
                 <h3>Economic Factors</h3>
-                <p>{analysisResult.analysis.economic}</p>
-                
+                <p>{analysisResult.analysis?.economic || "No data available"}</p>
                 <h3>Social Factors</h3>
-                <p>{analysisResult.analysis.social}</p>
-                
+                <p>{analysisResult.analysis?.social || "No data available"}</p>
                 <h3>Technological Factors</h3>
-                <p>{analysisResult.analysis.technological}</p>
-                
+                <p>{analysisResult.analysis?.technological || "No data available"}</p>
                 <h3>Environmental Factors</h3>
-                <p>{analysisResult.analysis.environmental}</p>
-                
+                <p>{analysisResult.analysis?.environmental || "No data available"}</p>
                 <h3>Legal Factors</h3>
-                <p>{analysisResult.analysis.legal}</p>
+                <p>{analysisResult.analysis?.legal || "No data available"}</p>
                 
-                <h3>Raw API Response</h3>
-                <pre className="analysis-result">
-                  {JSON.stringify(analysisResult, null, 2)}
-                </pre>
+                {/* Only show Raw API response in development mode
+                {process.env.NODE_ENV === 'development' && (
+                  <>
+                    <h3>Raw API Response</h3>
+                    <pre className="analysis-result">
+                      {JSON.stringify(analysisResult, null, 2)}
+                    </pre>
+                  </>
+                )} */}
                 
                 <button className="btn btn-success" onClick={saveAnalysis}>
                   Save Analysis
                 </button>
               </div>
             ) : null}
+            
+            {/* Add debugger component */}
+            {showDebugger && analysisResult && (
+              <DataDebugger 
+                analysisResult={analysisResult}
+                companyName={companyName}
+                sector={sector}
+              />
+            )}
           </>
         ) : (
           <div className="saved-analyses-container">
             <h2>Saved PESTEL Analyses</h2>
-            
             {savedAnalyses.length > 0 ? (
               <div className="saved-analyses">
                 {savedAnalyses.map(analysis => (
-                  <div className="analysis-card" key={analysis.id}>
+                  <div className="analysis-card" key={analysis._id}>
                     <h3>{analysis.company}</h3>
                     <div className="analysis-meta">
                       <p><strong>Sector:</strong> {analysis.sector}</p>
@@ -230,7 +285,7 @@ function App() {
                       </button>
                       <button 
                         className="btn btn-danger"
-                        onClick={() => deleteAnalysis(analysis.id)}
+                        onClick={() => deleteAnalysis(analysis._id)}
                       >
                         Delete
                       </button>
@@ -246,8 +301,8 @@ function App() {
           </div>
         )}
       </>
-    )
-  }
+    );
+  };
 
   const renderContent = () => {
     switch (activePage) {
@@ -257,7 +312,6 @@ function App() {
             <h1>Welcome to PESTEL Analysis Dashboard</h1>
             <div className="data-box" id="financialData">
               Create comprehensive PESTEL Analysis of any sector and company using advanced AI technology. Our platform enables you to generate detailed insights across Political, Economic, Social, Technological, Environmental, and Legal factors that impact business performance.
-              
               <div style={{ marginTop: '20px' }}>
                 <button className="btn btn-primary" onClick={() => handleNavClick('PESTEL analysis')}>
                   Start Your Analysis
@@ -265,9 +319,9 @@ function App() {
               </div>
             </div>
           </>
-        )
+        );
       case 'PESTEL analysis':
-        return renderPestelContent()
+        return renderPestelContent();
       case 'Markets Reports':
         return (
           <>
@@ -277,7 +331,7 @@ function App() {
               <p>This feature is coming soon.</p>
             </div>
           </>
-        )
+        );
       case 'Portfolio':
         return (
           <>
@@ -287,7 +341,7 @@ function App() {
               <p>This feature is coming soon.</p>
             </div>
           </>
-        )
+        );
       case 'Contact':
         return (
           <>
@@ -298,18 +352,17 @@ function App() {
               <p>Phone: (555) 123-4567</p>
             </div>
           </>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <>
       <div className="header">
         <span>PESTEL ANALYSIS DASHBOARD</span>
       </div>
-    
       <div className="nav-bar">
         <a 
           href="#" 
@@ -347,14 +400,12 @@ function App() {
           Contact
         </a>
       </div>
-    
       <div className="container">
         {renderContent()}
       </div>
-    
       <div className="footer">&copy; 2025 PESTEL Analysis Dashboard. All rights reserved.</div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

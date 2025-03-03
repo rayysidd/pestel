@@ -3,9 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const app = express(); // Move this line to the top!
 
@@ -37,14 +34,10 @@ app.post("/api/generate-pestel", async (req, res) => {
   // Simulate API-generated PESTEL analysis
 
   try {
-    const query = `Perform a PESTEL analysis for the company: ${company}, Sector: ${sector}. 
-Provide concise, single-line points for each category (Political, Economic, Social, Technological, Environmental, Legal).`;
-
+    const query = company ? `Company: ${company}, Sector: ${sector || 'N/A'}` : `Sector: ${sector}`;
+    
     // Call Gemini API
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(query);
-    const response = result.response.text();
-
+    const response = await genAI.analyze(query);
     
     res.json({ analysis: response });
 } catch (error) {
