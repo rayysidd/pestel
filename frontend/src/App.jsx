@@ -16,7 +16,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [savedAnalyses, setSavedAnalyses] = useState([]);
   const [activeTab, setActiveTab] = useState('form');
-  const [showDebugger, setShowDebugger] = useState(true); // Set to true to show debugger
+  const [showDebugger, setShowDebugger] = useState(false); // Set to true to show debugger
 
   // Helper function to parse markdown analysis string into an object
   const parseMarkdownToAnalysis = (markdown) => {
