@@ -9,9 +9,9 @@ const getPESTELAnalysis = async (req, res) => {
       return res.status(400).json({ error: "Company name is required" });
     }
 
-    const prompt = `Perform a PESTEL analysis for ${company}. Just single-line points for each factor.`;
+    const prompt = `Perform a PESTEL analysis for ${company}.Explain each factor in detail .It should be personalised according to the company.It should not be a generic analysis`;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(prompt);
 
     // Extracting the correct response format

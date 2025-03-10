@@ -37,8 +37,7 @@ app.post("/api/generate-pestel", async (req, res) => {
   // Simulate API-generated PESTEL analysis
 
   try {
-    const query = `Perform a PESTEL analysis for the company: ${company}, Sector: ${sector}. 
-Provide concise, single-line points for each category (Political, Economic, Social, Technological, Environmental, Legal).`;
+    const query = `Perform a PESTEL analysis for ${company}.Explain each factor in 2 to 3 lines .`;
 
     // Call Gemini API
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
