@@ -62,6 +62,12 @@ function App() {
       });
       // If analysis is a markdown string, parse it into an object.
       let data = response.data;
+      
+      if (!data || !data.analysis) {
+        setAnalysisResult({ message: "Pestel analysis could not be generated. Please try again later." });
+        return;
+      }
+
       if (data && typeof data.analysis === 'string') {
         data.analysis = parseMarkdownToAnalysis(data.analysis);
       }
@@ -226,18 +232,38 @@ function App() {
                 <p><strong>Sector:</strong> {analysisResult.sector || sector}</p>
                 <p><strong>Date:</strong> {formatDate(analysisResult.date || analysisResult.savedAt)}</p>
                 
-                <h3>Political Factors</h3>
-                <p>{analysisResult.analysis?.political || "No data available"}</p>
-                <h3>Economic Factors</h3>
-                <p>{analysisResult.analysis?.economic || "No data available"}</p>
-                <h3>Social Factors</h3>
-                <p>{analysisResult.analysis?.social || "No data available"}</p>
-                <h3>Technological Factors</h3>
-                <p>{analysisResult.analysis?.technological || "No data available"}</p>
-                <h3>Environmental Factors</h3>
-                <p>{analysisResult.analysis?.environmental || "No data available"}</p>
-                <h3>Legal Factors</h3>
-                <p>{analysisResult.analysis?.legal || "No data available"}</p>
+                <div className="all-Factors">
+                  <div class="Factors political">
+                    <h3>Political Factors</h3>
+                    <p>{analysisResult.analysis?.political || "Invalid Information Entered!"}</p>
+                  </div>
+                
+                  <div className="Factors economic">
+                    <h3>Economic Factors</h3>
+                    <p>{analysisResult.analysis?.economic || "Invalid Information Entered!"}</p>
+                  </div>
+
+                  <div className="Factors social">
+                    <h3>Social Factors</h3>
+                    <p>{analysisResult.analysis?.social || "Invalid Information Entered!"}</p>      
+                  </div>
+                
+                  <div className="Factors technological">
+                    <h3>Technological Factors</h3>
+                    <p>{analysisResult.analysis?.technological || "Invalid Information Entered!"}</p>
+                  </div>
+                
+                  <div className="Factors environmental">
+                    <h3>Environmental Factors</h3>
+                    <p>{analysisResult.analysis?.environmental || "Invalid Information Entered!"}</p>
+                  </div>
+                
+                  <div className="Factors legal">
+                    <h3>Legal Factors</h3>
+                    <p>{analysisResult.analysis?.legal || "Invalid Information Entered!"}</p>
+                  </div>
+                </div>
+                
                 
                 {/* Only show Raw API response in development mode
                 {process.env.NODE_ENV === 'development' && (

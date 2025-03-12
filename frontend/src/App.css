@@ -205,6 +205,7 @@
 }
 
 .btn-success {
+  margin: 10px;
   background-color: var(--success);
   color: white;
 }
@@ -222,20 +223,61 @@
   padding: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
-  line-height: 1.6;
+  line-height: 1.4;
   text-align: left;
   border-left: 4px solid var(--primary);
+  /* border-right: 4px solid var(--primary); */
   transition: all 0.3s ease;
   animation: fadeIn 1s ease-out;
-  max-height: 500px;
+  max-height: 700px;
   overflow-y: auto;
   color: var(--text-primary);
-
 }
 
 .data-box:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
+}
+
+.all-Factors {
+  display: flex;
+}
+
+.Factors {
+  margin: 0 5px 0 5px;
+  width: 15%;
+  height: auto;
+  font-size: 0.9rem;
+  border-radius: 7px;
+  border: 2px solid black;
+  padding: 5px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  /* animation: fadeIn 0.8s ease-out; */
+}
+
+.Factors.political {
+  background: radial-gradient(circle, #df8439 0%, #e9b082 70%);
+}
+
+.Factors.economic {
+  background: radial-gradient(circle, #1f43e6 0%, #566dd4 70%);
+}
+
+.Factors.social {
+  background: radial-gradient(circle, #164e8d 0%, #4895ef 70%);
+}
+
+.Factors.technological {
+  background: radial-gradient(circle, #10657f 0%, #4cc9f0 70%);
+}
+
+.Factors.environmental {
+  background: radial-gradient(circle, #db6e15 0%, #F4A261 70%);
+}
+
+.Factors.legal {
+  background: radial-gradient(circle, #2A2A72 0%, #6363be 70%);
 }
 
 #financialData {

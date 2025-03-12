@@ -37,15 +37,22 @@ app.post("/api/generate-pestel", async (req, res) => {
   // Simulate API-generated PESTEL analysis
 
   try {
-    const query = `Perform a PESTEL analysis for ${company}.Explain each factor in detail in 4 to 5 lines.The text should be plain and without any markdown`;
-
     // Call Gemini API
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(query);
-    const response = result.response.text();
+    const prompt1 = `Does the ${company} exist? Answer 1 if yes and 0 if no; nothing else to be answered`;
+    const exist = await model.generateContent(prompt1);
 
+    if(exist == `0`) {
+      res.status(400).json({ error: "A company with this name could not be found" });
+    } else {
+      const query = `Perform a PESTEL analysis for ${company}.Explain each factor in detail in 4 to 5 lines.The text should be plain and without any markdown`;
 
-    res.json({ analysis: response });
+     
+      const result = await model.generateContent(query);
+      const response = result.response.text();
+
+      res.json({ analysis: response });
+    }
 } catch (error) {
     console.error('Error generating PESTEL analysis:', error);
     res.status(500).json({ error: 'Failed to generate analysis' });
