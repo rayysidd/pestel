@@ -37,7 +37,7 @@ app.post("/api/generate-pestel", async (req, res) => {
   // Simulate API-generated PESTEL analysis
 
   try {
-    const query = `Perform a PESTEL analysis for ${company}.Explain each factor in 2 to 3 lines.The text should be plain and without any markdown`;
+    const query = `Perform a PESTEL analysis for ${company}.Explain each factor in detail in 4 to 5 lines.The text should be plain and without any markdown`;
 
     // Call Gemini API
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
