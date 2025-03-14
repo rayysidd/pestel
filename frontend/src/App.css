@@ -15,14 +15,50 @@
   --warning: #f39c12;
 }
 
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+/* Apply box-sizing to all elements */
+* {
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
-  font-family: 'Poppins', 'Inter', system-ui, sans-serif;
-  color: var(--text-primary);
+}
+
+/* Ensure the root container has a consistent width */
+#root, .container {
+  max-width: 1280px; /* Adjust as per your design */
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Fix flexbox/grid layouts */
+.all-Factors {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px; /* Add spacing between elements */
+}
+
+/* Set uniform width for factor boxes */
+.Factors {
+  flex: 1;
+  min-width: 150px; /* Prevents elements from shrinking too much */
+  max-width: 15%; /* Adjust as needed */
+  text-align: center;
+  padding: 10px;
+}
+
+/* Adjust data boxes to align properly */
+.data-box {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ddd;
+}
+
+/* Prevent horizontal scrolling issues */
+html, body {
+  width: 100%;
   overflow-x: hidden;
 }
+
 
 /* Header */
 .header {
@@ -35,6 +71,7 @@
   box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
   animation: fadeIn 0.8s ease-out;
   position: relative;
+  height:5rem;
   overflow: hidden;
 }
 
