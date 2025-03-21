@@ -22,11 +22,20 @@
   padding: 0;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
 /* Ensure the root container has a consistent width */
 #root, .container {
-  max-width: 1280px; /* Adjust as per your design */
+  max-width: 1280px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 1rem; /* Added padding to prevent content from touching edges on narrow screens */
 }
 
 /* Fix flexbox/grid layouts */
@@ -34,31 +43,52 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px; /* Add spacing between elements */
+  gap: 15px; /* Increased gap for better spacing */
+  margin: 1.5rem 0; /* Added vertical margin */
 }
 
 /* Set uniform width for factor boxes */
 .Factors {
-  flex: 1;
-  min-width: 150px; /* Prevents elements from shrinking too much */
-  max-width: 15%; /* Adjust as needed */
+  flex: 1 1 150px; /* Changed to a flexible basis with min width */
+  max-width: calc(16.66% - 15px); /* Adjusted for 6 factors with gap */
   text-align: center;
-  padding: 10px;
+  padding: 15px 10px;
+  font-size: 0.9rem;
+  border-radius: 7px;
+  border: 2px solid black;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: auto; /* Allow height to adjust to content */
+}
+
+.Factors:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Adjust data boxes to align properly */
 .data-box {
   width: 100%;
   padding: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--gray-300);
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  line-height: 1.4;
+  text-align: left;
+  border-left: 4px solid var(--primary);
+  transition: all 0.3s ease;
+  max-height: 700px;
+  overflow-y: auto;
+  color: var(--text-primary);
 }
 
-/* Prevent horizontal scrolling issues */
-html, body {
-  width: 100%;
-  overflow-x: hidden;
+.data-box:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
 }
-
 
 /* Header */
 .header {
@@ -69,10 +99,13 @@ html, body {
   font-weight: bold;
   letter-spacing: 1px;
   box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-  animation: fadeIn 0.8s ease-out;
   position: relative;
-  height:5rem;
+  height: auto; /* Changed from fixed height to auto */
+  min-height: 5rem;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header::before {
@@ -85,6 +118,7 @@ html, body {
   background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
   animation: shine 6s infinite linear;
   z-index: 1;
+  will-change: transform; /* Performance optimization */
 }
 
 .header span {
@@ -103,7 +137,7 @@ html, body {
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  animation: slideDown 0.5s ease-out;
+  flex-wrap: wrap; /* Enable wrapping for smaller screens */
 }
 
 .nav-bar a {
@@ -129,11 +163,14 @@ html, body {
   transition: width 0.3s ease;
 }
 
-.nav-bar a:hover {
+.nav-bar a:hover,
+.nav-bar a:focus {
   color: var(--primary);
+  outline: none;
 }
 
-.nav-bar a:hover::after {
+.nav-bar a:hover::after,
+.nav-bar a:focus::after {
   width: 70%;
 }
 
@@ -150,7 +187,6 @@ html, body {
   padding: 2rem;
   min-height: calc(100vh - 200px);
   background-color: var(--light-bg);
-  animation: fadeIn 1s ease-out;
 }
 
 .container h1 {
@@ -180,7 +216,6 @@ html, body {
   padding: 2rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
-  animation: slideUp 0.7s ease-out;
   border-left: 4px solid var(--primary);
   max-width: 700px;
   margin: 0 auto 2rem auto;
@@ -219,6 +254,13 @@ html, body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
 }
 
 .btn-primary {
@@ -226,7 +268,8 @@ html, body {
   color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary:focus {
   background-color: var(--secondary);
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
@@ -237,7 +280,8 @@ html, body {
   color: var(--text-primary);
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover,
+.btn-secondary:focus {
   background-color: var(--gray-300);
 }
 
@@ -247,52 +291,14 @@ html, body {
   color: white;
 }
 
-.btn-success:hover {
+.btn-success:hover,
+.btn-success:focus {
   background-color: #27ae60;
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
 }
 
-/* Data Box */
-.data-box {
-  background-color: var(--white);
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-  line-height: 1.4;
-  text-align: left;
-  border-left: 4px solid var(--primary);
-  /* border-right: 4px solid var(--primary); */
-  transition: all 0.3s ease;
-  animation: fadeIn 1s ease-out;
-  max-height: 700px;
-  overflow-y: auto;
-  color: var(--text-primary);
-}
-
-.data-box:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  transform: translateY(-5px);
-}
-
-.all-Factors {
-  display: flex;
-}
-
-.Factors {
-  margin: 0 5px 0 5px;
-  width: 15%;
-  height: auto;
-  font-size: 0.9rem;
-  border-radius: 7px;
-  border: 2px solid black;
-  padding: 5px;
-  color: white;
-  font-family: 'Inter', sans-serif;
-  /* animation: fadeIn 0.8s ease-out; */
-}
-
+/* Factor colors */
 .Factors.political {
   background: radial-gradient(circle, #df8439 0%, #e9b082 70%);
 }
@@ -329,12 +335,13 @@ html, body {
   padding: 1rem;
   background-color: var(--gray-100);
   border-radius: 6px;
+  overflow-x: auto; /* Prevent code overflow */
 }
 
 /* Saved Analyses */
 .saved-analyses {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
 }
@@ -346,7 +353,9 @@ html, body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   border-top: 4px solid var(--primary);
-  animation: fadeIn 0.8s ease-out;
+  height: 100%; /* Ensure equal height cards */
+  display: flex;
+  flex-direction: column;
 }
 
 .analysis-card:hover {
@@ -370,7 +379,7 @@ html, body {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: auto; /* Push to bottom of card */
 }
 
 .empty-state {
@@ -383,6 +392,8 @@ html, body {
   display: flex;
   border-bottom: 1px solid var(--gray-300);
   margin-bottom: 2rem;
+  overflow-x: auto; /* Allow scrolling on small screens */
+  -webkit-overflow-scrolling: touch;
 }
 
 .tab {
@@ -393,6 +404,12 @@ html, body {
   color: var(--text-secondary);
   font-weight: 500;
   position: relative;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.tab:focus {
+  outline: none;
+  color: var(--primary);
 }
 
 .tab.active {
@@ -416,7 +433,6 @@ html, body {
   padding: 1.5rem;
   text-align: center;
   font-size: 0.9rem;
-  animation: fadeIn 1s ease-out;
 }
 
 /* Loader */
@@ -434,6 +450,7 @@ html, body {
   border-radius: 50%;
   background-color: var(--primary);
   animation: loaderDot 1.4s infinite ease-in-out both;
+  will-change: transform; /* Performance optimization */
 }
 
 .loader-dot:nth-child(1) {
@@ -527,8 +544,53 @@ html, body {
     margin-bottom: 1rem;
   }
   
+  .analysis-form {
+    padding: 1.5rem;
+  }
+  
+  .Factors {
+    max-width: calc(50% - 15px); /* Two columns on medium screens */
+    flex: 0 0 calc(50% - 15px);
+  }
+  
+  .saved-analyses {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .Factors {
+    max-width: 100%; /* Full width on small screens */
+    flex: 0 0 100%;
+  }
+  
   .btn {
     width: 100%;
     margin-bottom: 0.5rem;
+  }
+  
+  .header {
+    font-size: 1.2rem;
+  }
+  
+  .container h1 {
+    font-size: 1.8rem;
+  }
+  
+  .data-box {
+    padding: 15px;
+  }
+  
+  /* Remove some animations on mobile for performance */
+  .header::before {
+    animation: none;
+  }
+  
+  .data-box:hover {
+    transform: none;
+  }
+  
+  .analysis-card:hover {
+    transform: none;
   }
 }
