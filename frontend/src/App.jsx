@@ -4,7 +4,9 @@ import './index.css'
 import Navbar from './Navbar';
 import Footer from './Footer';
 import Home from './Home';
+import NewsPage from './NewsPage';
 import PestelAnalysis from './PestelAnalysis';
+// import NewsHomePage from './NewsHomePage';
 
 function App() {
   const [activePage, setActivePage] = useState('Home');
@@ -20,15 +22,8 @@ function App() {
       case 'PESTEL analysis':
         return <PestelAnalysis />;
       case 'Markets Reports':
-        return (
-          <>
-            <h1>Market Reports</h1>
-            <div className="data-box">
-              <p>Our comprehensive market reports provide in-depth analysis of industry trends, competitive landscapes, and growth opportunities.</p>
-              <p>This feature is coming soon.</p>
-            </div>
-          </>
-        );
+        return <NewsPage onRefreshNews={() => handleNavClick('Markets Reports')} />;
+        ;
       case 'Portfolio':
         return (
           <>
