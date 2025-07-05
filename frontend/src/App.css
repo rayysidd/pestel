@@ -82,7 +82,7 @@ html, body {
   transition: all 0.3s ease;
   max-height: 700px;
   overflow-y: auto;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .data-box:hover {
@@ -276,25 +276,39 @@ html, body {
 }
 
 .btn-secondary {
-  background-color: var(--gray-200);
-  color: var(--text-primary);
+  background-color: var(--success);
+  color: var(--gray-100);
 }
 
 .btn-secondary:hover,
 .btn-secondary:focus {
   background-color: var(--gray-300);
+  color: var(--text-primary);
 }
 
 .btn-success {
   margin: 10px;
-  background-color: var(--success);
+  background-color: var(--secondary);
   color: white;
+}
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: var(--light-bg); /* darker red on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+  color: var(--text-primary);
 }
 
 .btn-success:hover,
 .btn-success:focus {
-  background-color: #27ae60;
+  background-color: var(--light-bg);
   transform: translateY(-2px);
+  color: var(--secondary);
   box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
 }
 
@@ -325,7 +339,7 @@ html, body {
 
 #financialData {
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: var(--white);
 }
 
 .analysis-result {
@@ -377,10 +391,12 @@ html, body {
 
 .card-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center; /* <-- Center the buttons horizontally */
   gap: 0.5rem;
-  margin-top: auto; /* Push to bottom of card */
+  margin-top: auto;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
 }
+
 
 .empty-state {
   text-align: center;
@@ -395,7 +411,9 @@ html, body {
   overflow-x: auto; /* Allow scrolling on small screens */
   -webkit-overflow-scrolling: touch;
 }
-
+.tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
 .tab {
   padding: 0.75rem 1.5rem;
   cursor: pointer;
@@ -555,6 +573,9 @@ html, body {
   
   .saved-analyses {
     grid-template-columns: 1fr;
+  }
+  .btn{
+    padding: 0.75rem 4rem;
   }
 }
 

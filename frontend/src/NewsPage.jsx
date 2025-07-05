@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import './NewsPage.css';
 
 const NewsPage = () => {
   const [news, setNews] = useState([]);
@@ -45,32 +46,34 @@ const NewsPage = () => {
       {loading && <p>Loading news...</p>}
       {error && <p>{error}</p>}
 
-      <div style={{ marginTop: "20px", maxHeight: "500px", overflowY: "auto", paddingRight: "10px" }}>
+      <div style={{marginTop: "20px", maxHeight: "500px", overflowY: "auto", paddingRight: "10px" }}>
         {news.length > 0 ? (
           news.slice(0, 15).map((article, index) => (
             <div
               key={index}
               style={{
+                backgroundColor:"lightcyan",
                 border: "1px solid #ddd",
-                borderRadius: "4px",
-                padding: "15px",
+                borderRadius: "13px",
+                padding: "25px",
                 marginBottom: "15px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                textAlign: "left",
               }}
             >
-              <h3 style={{ margin: "0 0 10px" }}>{article.title}</h3>
+              <h3 style={{ color:"darkblue",margin: "0 0 10px" }}>{article.title}</h3>
               <p>{article.description}</p>
               <a
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#4361ee", textDecoration: "none", marginRight: "10px" }}
+                style={{ display: "inline-block", paddingTop:"20px",color: "#4361ee", textDecoration: "none", marginRight: "10px" }}
               >
                 Read more
               </a>
               <button 
                 onClick={() => saveArticle(article)} 
-                style={{ padding: "5px 10px" }}
+                style={{ padding: "5px 10px" , color:"white",backgroundColor:"green"}}
                 className="save-btn"
               >
                 Save
